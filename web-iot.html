@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Smart Parking</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+        .kotak-parkir { background: white; padding: 20px; border-radius: 10px; display: inline-block; box-shadow: 0px 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        .angka-slot { font-size: 80px; font-weight: bold; color: #007bff; margin: 10px 0; }
+        .status { font-size: 24px; font-weight: bold; }
+        .tersedia { color: green; }
+        .penuh { color: red; }
+    </style>
+</head>
+<body>
+
+    <div class="kotak-parkir">
+        <h1>Sistem Parkir Kampus</h1>
+        <p>Sisa Slot Saat Ini:</p>
+        <div class="angka-slot" id="angka-slot">...</div>
+        <div class="status" id="status-parkir">Memuat data...</div>
+    </div>
+
+    <script>
+        // Link database Firebase Anda persis seperti di Wokwi
+        const databaseURL = "https://test-iot-1e48f-default-rtdb.firebaseio.com/sisaParkir.json";
+
+        function cekDatabase() {
+            fetch(databaseURL)
+                .then(response => response.json())
+                .then(data => {
+                    // Menampilkan angka di layar web
+                    document.getElementById("angka-slot").innerText = data;
+                    
+                    // Mengubah tulisan status
+                    const statusText = document.getElementById("status-parkir");
+                    if (data > 0) {
+                        statusText.innerText = "Tersedia";
+                        statusText.className = "status tersedia";
+                    } else {
+                        statusText.innerText = "Parkiran Penuh!";
+                        statusText.className = "status penuh";
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        // Jalankan fungsi saat web pertama kali dibuka
+        cekDatabase();
+
+        // Minta web untuk otomatis mengecek data setiap 2 detik (2000 ms)
+        setInterval(cekDatabase, 2000);
+    </script>
+
+</body>
+</html>
